@@ -113,6 +113,21 @@ class TestJsonField(TestCase):
         self.assertEquals(obj.value, {"key": "value"})
 
 
+    def test_query_both(self):
+        stor = JsonModel(value={"key": "value"})
+        stor.save()
+
+        query = select([JsonModel.sa.id, JsonModel.sa.value])
+        with get_engine().begin() as connection:
+            test_data = connection.execute(query)
+
+        obj = list(test_data)[0]
+        self.assertEquals(obj.value, {"key": "value"})
+
+        obj = JsonModel.objects.get(id=stor.id)
+        self.assertEquals(obj.value, {"key": "value"})
+
+
 class TestDateRangeField(TestCase):
     def test_model_creates(self):
         assert DateRangeModel.sa is not None
